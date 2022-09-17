@@ -55,18 +55,24 @@ server.get('/dad-jokes/:id', (req, res) => {
     }
 });
 
-// POST | /dad-jokes
-server.get('/dad-jokes/:id', (req, res) => {
-    const dadJokeId = req.params.id;
+// POST | /dad-jokes/:id
+server.post('/dad-jokes', (req, res) => {
+    const newDadJokeData = req.body;
 
     try {
-        const foundDadJoke = findDadJoke(dadJokeId);
-        if (foundDadJoke === undefined) throw ({
-            message: 'Nerastas bairis',
+        if (!isValidJokeData(newDadJokeData)) throw ({
+            message: 'Neteisingi duomenys',
             status: 400
         });
 
-        res.status(200).json(foundDadJoke)
+        const newDadJoke = {
+            id: createId(),
+            ...newDadJokeData,
+        }
+
+        database.dadJokes.push(newDadJoke);
+
+        res.status(201).json(newDadJoke)
 
     } catch ({ status, message }) {
         res.status(status).json({ message });

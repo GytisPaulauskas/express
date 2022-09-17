@@ -31,6 +31,8 @@ const isValidJokeData = ({ question, punchline }) => (
 
 const createCmpById = (dadJokeIdStr) => ({ id }) => id === Number(dadJokeIdStr);
 
+const findDadJoke = (dadJokeIdStr) => database.dadJokes.find(createCmpById(dadJokeIdStr))
+
 // GET | /dad-jokes
 server.get('/dad-jokes', (req, res) => {
     res.status(200).json(database.dadJokes)
@@ -41,14 +43,13 @@ server.get('/dad-jokes/:id', (req, res) => {
     const dadJokeId = req.params.id;
 
     try {
-        const dadJoke = database.dadJokes.find(createCmpById(dadJokeId));
-        if (dadJoke === undefined) throw ({
+        const foundDadJoke = findDadJoke(dadJokeId);
+        if (foundDadJoke === undefined) throw ({
             message: 'Nerastas bairis',
-            status: 400
+            status: 404
         });
 
-        res.status(200).json(dadJoke)
-
+        res.status(200).json(foundDadJoke);
     } catch ({ status, message }) {
         res.status(status).json({ message });
     }
@@ -59,13 +60,13 @@ server.get('/dad-jokes/:id', (req, res) => {
     const dadJokeId = req.params.id;
 
     try {
-        const dadJoke = database.dadJokes.find(createCmpById(dadJokeId));
-        if (dadJoke === undefined) throw ({
+        const foundDadJoke = findDadJoke(dadJokeId);
+        if (foundDadJoke === undefined) throw ({
             message: 'Nerastas bairis',
             status: 400
         });
 
-        res.status(200).json(dadJoke)
+        res.status(200).json(foundDadJoke)
 
     } catch ({ status, message }) {
         res.status(status).json({ message });
